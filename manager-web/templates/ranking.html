@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>유저별 제재 횟수 통계</title>
+    <style>
+        body { background-color: #121212; color: #e0e0e0; font-family: sans-serif; margin: 0; padding: 20px; padding-bottom: 50px; }
+        header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 15px; margin-bottom: 20px; }
+        .btn-group { display: flex; gap: 8px; }
+        .nav-btn { background: #28a745; color: white; padding: 8px 15px; text-decoration: none; border-radius: 4px; font-size: 14px; font-weight: bold; }
+        .logout-btn { background: #dc3545; color: white; padding: 8px 15px; text-decoration: none; border-radius: 4px; font-size: 14px; }
+        table { width: 100%; border-collapse: collapse; background: #1e1e1e; border-radius: 8px; overflow: hidden; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #2d2d2d; font-size: 14px; }
+        th { background: #252525; color: #fff; white-space: nowrap; }
+        tr:hover { background: #252525; }
+        
+        .badge-common {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 12px;
+            color: #fff;
+        }
+        .badge-total { background-color: #6c757d; }
+
+        .footer-credit {
+            position: fixed;
+            bottom: 15px;
+            right: 20px;
+            color: #666;
+            font-size: 13px;
+            background: rgba(18, 18, 18, 0.8);
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h2>📊 유저별 제재 횟수 통계</h2>
+        <div class="btn-group">
+            <a href="/dashboard" class="nav-btn">실시간 모니터링으로 이동</a>
+            <a href="/logout" class="logout-btn">로그아웃</a>
+        </div>
+    </header>
+
+    <table>
+        <thead>
+            <tr>
+                <th>순위</th>
+                <th>유저 닉네임 (ID)</th>
+                <th>총 제재 횟수</th>
+                <th>채팅금지</th>
+                <th>강퇴</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in rankings %}
+            <tr>
+                <td><strong>{{ loop.index }}위</strong></td>
+                <td><strong>{{ user.user_nickname }}</strong> <span style="color: #888; font-size: 12px;">({{ user.user_id }})</span></td>
+                <td><span class="badge-common badge-total">{{ user.sanction_count }}회</span></td>
+                <td>{{ user.mute_count }}회</td>
+                <td>{{ user.kick_count }}회</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="footer-credit">
+        made by 하늘하늘_
+    </div>
+</body>
+</html>

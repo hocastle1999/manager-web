@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>벤허브 제재 관리 대시보드</title>
+    <style>
+        body { background-color: #121212; color: #e0e0e0; font-family: sans-serif; margin: 0; padding: 20px; padding-bottom: 50px; }
+        header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 15px; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+        .header-left { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
+        .btn-group { display: flex; gap: 8px; align-items: center; }
+        .nav-btn { background: #007bff; color: white; padding: 8px 15px; text-decoration: none; border-radius: 4px; font-size: 14px; font-weight: bold; }
+        .logout-btn { background: #dc3545; color: white; padding: 8px 15px; text-decoration: none; border-radius: 4px; font-size: 14px; }
+        
+        /* 매니저 필터 셀렉트박스 스타일 */
+        .manager-select { padding: 8px 12px; background: #222; color: #fff; border: 1px solid #444; border-radius: 4px; font-size: 14px; cursor: pointer; }
+
+        table { width: 100%; border-collapse: collapse; background: #1e1e1e; border-radius: 8px; overflow: hidden; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #2d2d2d; font-size: 14px; }
+        th { background: #252525; color: #fff; white-space: nowrap; }
+        tr:hover { background: #252525; }
+        
+        .badge-common {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 12px;
+            white-space: nowrap;
+            color: #fff;
+        }
+        .badge-mute { background-color: #ffc107; color: #000; }
+        .badge-kick { background-color: #fd7e14; }
+
+        .manager-cell { white-space: nowrap; }
+
+        .footer-credit {
+            position: fixed;
+            bottom: 15px;
+            right: 20px;
+            color: #666;
+            font-size: 13px;
+            background: rgba(18, 18, 18, 0.8);
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-left">
+            <h2>🛡️ 벤허브 제재 내역 모니터링 (총 수집: {{ total_stats.total_count }}건)</h2>
+            <!-- 매니저 필터 Form -->
+            <form method="GET" action="/dashboard" style="margin: 0;">
+                <select name="manager" class="manager-select" onchange="this.form.submit()">
+                    <option value="">전체 매니저 보기</option>
+                    {% for m in managers %}
+                        <option value="{{ m.manager_nickname }}" {% if selected_manager == m.manager_nickname %}selected{% endif %}>
+                            {{ m.manager_nickname }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
+        <div class="btn-group">
+            <a href="/ranking" class="nav-btn">유저별 통계 보기</a>
+            <a href="/logout" class="logout-btn">로그아웃</a>
+        </div>
+    </header>
+
+    <table>
+        <thead>
+            <tr>
+                <th>제재 일시</th>
+                <th>유저 닉네임 (ID)</th>
+                <th>유형</th>
+                <th>처리 매니저</th>
+                <th>당시 채팅 기록</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+            <tr>
+                <td>{{ log.sanction_time }}</td>
+                <td><strong>{{ log.user_nickname }}</strong> <span style="color: #888; font-size: 12px;">({{ log.user_id }})</span></td>
+                <td>
+                    {% if log.action_type == 'MUTE' %}
+                        <span class="badge-common badge-mute">채금</span>
+                    {% else %}
+                        <span class="badge-common badge-kick">강퇴</span>
+                    {% endif %}
+                </td>
+                <td class="manager-cell">{{ log.manager_nickname }}</td>
+                <td style="font-size: 13px; color: #aaa;">{{ log.chat_context }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="footer-credit">
+        made by 하늘하늘_
+    </div>
+</body>
+</html>
